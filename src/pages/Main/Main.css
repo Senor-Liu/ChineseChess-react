@@ -1,0 +1,14 @@
+body {
+	padding: 0; 
+	margin: 0;
+	/* background-image: url("../img/bg.jpg"); */
+	z-index: -100;
+}
+
+#div-main {
+	display:flex;
+  justify-content:center;
+	width: auto;
+	height: auto;
+}
+

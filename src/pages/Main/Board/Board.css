@@ -1,0 +1,58 @@
+/* 棋盘table */
+#div-chessboard {
+	position: relative;
+	top: 50px;
+	width: 600px;
+	height: 600px;
+}
+.chesstable {
+  position: relative;
+  left: 100px;
+  top: 0px;
+	border: 5px double black;
+  border-collapse: collapse;
+	z-index: 1;
+	background-image: url("img/bg_table.jpg");
+	/* 防止文本被选中 */
+	-moz-user-select: none;		/* 火狐 */
+  -webkit-user-select: none;	/* webkit浏览器 */
+  -ms-user-select: none;		/* IE10 */
+  -khtml-user-select: none;	/* 早期浏览器 */
+  user-select: none;
+}
+
+/* 棋盘每个格的状态 */
+.chess-tr {
+  border-top: 1px solid black;
+}
+.chess-tr:last-child {
+  border-bottom: 1px solid black;
+}
+.chess-td {
+  width: 50px;
+  height: 50px;
+  border-left: 1px solid black;
+}
+.chess-td:last-child {
+  border-right: 1px solid black;
+}
+
+/* 楚河 汉界 */
+.chess-center {
+  height: 50px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+}
+.chu-river {
+  text-align: center;
+  line-height: 50px;
+  font-size: 30px;
+  font-family: "隶书";
+}
+
+/* 斜线 */
+.chess-diagonal {
+  position: absolute;
+  z-index: 2;
+}
