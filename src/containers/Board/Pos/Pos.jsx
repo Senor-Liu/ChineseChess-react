@@ -6,7 +6,7 @@ import {
   move,
   change_select_state,
   change_active_id,
-} from '../../../../redux/actions/board'
+} from '../../../redux/actions/board';
 
 class Pos extends Component {
   handlePosChick = () => {

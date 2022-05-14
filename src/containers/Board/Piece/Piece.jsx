@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { enumPiece } from '../../../../pieceConstant';
+import { enumPiece } from '../../../pieceConstant';
 import './Piece.css'
 // 引入connect用于链接UI组件与redux
 import { connect } from "react-redux";
@@ -7,7 +7,7 @@ import {
   move,
   change_select_state,
   change_active_id,
-} from '../../../../redux/actions/board'
+} from '../../../redux/actions/board';
 
 class Piece extends Component {
   handlePieceClick = () => {

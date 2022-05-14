@@ -8,10 +8,27 @@ import {
   move,
   change_select_state,
   change_active_id,
-} from '../../../redux/actions/board'
+} from '../../redux/actions/board';
 
 // UI组件
 class Board extends Component {
+  componentDidMount() {
+    // 绘制斜线
+    let c = document.getElementById("diagonal");
+    let cxt = c.getContext("2d");
+    cxt.beginPath();
+    cxt.moveTo(258, 6);
+    cxt.lineTo(359, 107);
+    cxt.moveTo(359, 6);
+    cxt.lineTo(258, 107);
+
+    cxt.moveTo(258, 362);
+    cxt.lineTo(359, 463);
+    cxt.moveTo(359, 362);
+    cxt.lineTo(258, 463);
+    cxt.strokeStyle = "black"
+    cxt.stroke();
+  }
   //判断棋子能不能走
   canMove = (moveid, row, col) => {
     //判断是否对将
@@ -612,6 +629,7 @@ class Board extends Component {
             </tr>
           </tbody>
         </table>
+
         {
           this.props.piece.map((pieceObj) => {
             if (!pieceObj.dead) {

@@ -1,0 +1,8 @@
+@import '~antd/dist/antd.css';
+
+body {
+	padding: 0; 
+	margin: 0; 
+	background-image: url("../public/img/bg.jpg");
+	z-index: -100;
+}
