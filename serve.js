@@ -1,6 +1,6 @@
 /**
  * @infor 象棋后端主文件入口
- * @path  ./controller/index.js
+ * @path  ./serce.js
  */
 
 const { initApp } = require('./controller')

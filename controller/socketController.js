@@ -19,7 +19,7 @@ const createWebSocket = port => server = new WebSocket.Server({ port: port });
  * @param  {Number} port               端口号
  * @return void
  */
-const initEventHandle = (eventHandleObject, port = 3006) => {
+const initEventHandle = (eventHandleObject, port = 3001) => {
 	const server = createWebSocket(port)
 	server.on('connection', ws => {
 		Object.keys(eventHandleObject).forEach(event => {

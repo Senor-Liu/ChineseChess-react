@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Board from '../../containers/Board/Board';
+import Info from '../../containers/Info/Info';
 import './Main.css'
 
 class Main extends Component {
@@ -7,6 +8,7 @@ class Main extends Component {
     return (
       <div id="div-main">
         <Board />
+        <Info />
       </div>
     );
   }

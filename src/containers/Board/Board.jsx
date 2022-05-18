@@ -12,7 +12,17 @@ import {
 
 // UI组件
 class Board extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: '',
+    };
+    this.ws = new WebSocket('ws://localhost:3001'); // websocket实例
+    console.log('创建websocket实例成功', this.ws);
+  }
+
   componentDidMount() {
+    
     // 绘制斜线
     let c = document.getElementById("diagonal");
     let cxt = c.getContext("2d");
@@ -515,10 +525,9 @@ class Board extends Component {
     return machMove()
   }
 
-  click = () => {
+  clickSend = () => {
     console.log('点击了');
-    console.log(this.canMove(16, 8, 0));
-    this.props.move({ id: 0, toRow: 1, toCol: 0 })
+    this.ws.send(JSON.stringify({name:"dianji"}));
   }
 
   // 初始化棋子落位网方法
@@ -639,14 +648,15 @@ class Board extends Component {
                   {...pieceObj}
                   canMove={this.canMove}
                   judgePiece={this.judgePiece}
-                  machineMove={this.machineMove} />
+                  machineMove={this.machineMove}
+                  ws={this.ws} />
               )
             }
             return null
           })
         }
         <>{this.initPos()}</>
-        <button style={{ position: 'absolute', top: '700px' }} onClick={this.click}>改变位置</button>
+        <button style={{ position: 'absolute', top: '700px' }} onClick={this.clickSend}>发送</button>
       </div>
     );
   }

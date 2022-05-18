@@ -10,6 +10,18 @@ import {
 } from '../../../redux/actions/board';
 
 class Piece extends Component {
+  componentDidMount() {
+    // Connection opened
+    this.props.ws.onopen = () => {
+      this.props.ws.send(JSON.stringify({name:"hello"}));
+    };
+
+    // Listen for messages
+    this.props.ws.onmessage = function (event) {
+      console.log('Message from server ', JSON.parse(event.data));
+    };
+  }
+
   handlePieceClick = () => {
     const {
       piece,

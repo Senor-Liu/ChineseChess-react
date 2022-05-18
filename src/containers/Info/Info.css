@@ -1,0 +1,22 @@
+#info-div {
+	position: relative;
+	left: 10px;
+	top: 80px;
+}
+.info-btn {
+	display: block;
+	margin-top: 20px;
+    background-color: #c93;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    color: #fff;
+    width: 80px;
+    height: 30px;
+    outline: none;
+    cursor: pointer;
+	z-index: 100;
+}
+.info-btn:hover {
+	background-color: #fc0;
+}

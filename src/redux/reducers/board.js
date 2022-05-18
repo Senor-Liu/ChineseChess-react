@@ -4,7 +4,7 @@
 * action: 动作对象
 */
 
-import { MOVE, CHANGE_SIDE, CHANGE_SELECT_STATE, CHANGE_ACTIVE_ID } from "../constant"
+import { MOVE, CHANGE_SIDE, CHANGE_SELECT_STATE, CHANGE_ACTIVE_ID, CHANGE_DIFFICULTY, CHANGE_MODE } from "../constant"
 import { initPiece } from "../../pieceConstant"
 
 const initState = {
@@ -16,6 +16,10 @@ const initState = {
   activeId: -1,
   // 是否有棋子被选中
   isSelectPiece: false,
+  // 难度
+  difficulty: 1,
+  // 是否单人模式
+  isSinglePlayer: true,
 }
 
 // reducer必须是纯函数！！！
@@ -53,6 +57,10 @@ export default function boardReducer(preState = initState, action) {
       return { ...preState, isSelectPiece: data }
     case CHANGE_ACTIVE_ID:
       return { ...preState, activeId: data }
+    case CHANGE_DIFFICULTY:
+      return { ...preState, difficulty: data }
+    case CHANGE_MODE:
+      return { ...preState, isSinglePlayer: data }
     default:
       return preState
   }
