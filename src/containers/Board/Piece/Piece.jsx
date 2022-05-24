@@ -10,25 +10,27 @@ import {
 } from '../../../redux/actions/board';
 
 class Piece extends Component {
-  componentDidMount() {
-    // Connection opened
-    this.props.ws.onopen = () => {
-      this.props.ws.send(JSON.stringify({name:"hello"}));
-    };
-
-    // Listen for messages
-    this.props.ws.onmessage = function (event) {
-      console.log('Message from server ', JSON.parse(event.data));
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
+  // componentDidMount() {
+    
+  // }
 
   handlePieceClick = () => {
+    console.log(this.props.isSinglePlayer);
+
+    if (this.props.wait) {
+      alert("请等待对方加入");
+      return;
+    }
     const {
       piece,
       id,
       activeId,
       isRedMove,
       isSelectPiece,
+      isSinglePlayer,
       move,
       canMove,
       machineMove,
@@ -104,7 +106,7 @@ class Piece extends Component {
 
           // change_active_id(-1);
 
-          if (activeId >= 16) {
+          if (isSinglePlayer && activeId >= 16) {
             machineMove();
           }
         }
@@ -135,6 +137,7 @@ export default connect(
     isRedMove: state.board.isRedMove,
     activeId: state.board.activeId,
     isSelectPiece: state.board.isSelectPiece,
+    isSinglePlayer: state.board.isSinglePlayer,
   }),
   // mapDispatchToProps简写，react-redux会自动调用dispatch
   {

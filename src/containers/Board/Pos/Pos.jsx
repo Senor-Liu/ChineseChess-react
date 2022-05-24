@@ -15,6 +15,7 @@ class Pos extends Component {
       col,
       activeId,
       isSelectPiece,
+      isSinglePlayer,
       move,
       canMove,
       machineMove,
@@ -32,8 +33,7 @@ class Pos extends Component {
         }
 
         // change_active_id(-1);
-
-        if (activeId >= 16) {
+        if (isSinglePlayer && activeId >= 16) {
           machineMove();
         }
       }
@@ -61,6 +61,7 @@ export default connect(
     isRedMove: state.board.isRedMove,
     activeId: state.board.activeId,
     isSelectPiece: state.board.isSelectPiece,
+    isSinglePlayer: state.board.isSinglePlayer,
   }),
   // mapDispatchToProps简写，react-redux会自动调用dispatch
   {

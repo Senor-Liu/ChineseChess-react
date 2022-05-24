@@ -1,6 +1,6 @@
 /**
  * @infor 象棋后端主文件入口
- * @path  ./serce.js
+ * @path  ./serve.js
  */
 
 const { initApp } = require('./controller')
@@ -53,7 +53,7 @@ const messageHandle = message => {
 	const insertUserData = _ => {
 		//设置用户表
 		setUserInfo(userList, data.currentUser);
-		data.isInit = true;
+		// data.isInit = true;
 
 		//添加新用户，默认赢的次数为0
 		const insertUserInfoData = index => {
@@ -76,7 +76,7 @@ const messageHandle = message => {
 	}
 
 	data.win && updateWinnerNum() // 用户胜利，更新winner数据
-	!data.currentUser ? (data.isInit = false) : insertUserData() //当前用户是否存在，存在查询更新数据
+	// !data.currentUser ? (data.isInit = false) : insertUserData() //当前用户是否存在，存在查询更新数据
 	sendAllUserInfo(data);//查询所有用户信息
 }
 

@@ -22,6 +22,15 @@ const enumPiece = {
   }
 };
 
+/* 
+ * 初始化所有棋子对象
+ * id: 棋子ID
+ * type: 棋子类型
+ * red: 棋子颜色（红棋为true，黑棋为false）
+ * row: 行坐标
+ * col: 列坐标
+ * dead: 棋子是否已死
+*/
 const initPiece = [
   { id: 0, type: enumPiece.JU, red: true, row: 0, col: 0, dead: false },
   { id: 1, type: enumPiece.MA, red: true, row: 0, col: 1, dead: false },

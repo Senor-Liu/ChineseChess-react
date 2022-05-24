@@ -8,6 +8,7 @@ import {
   move,
   change_select_state,
   change_active_id,
+  change_mode,
 } from '../../redux/actions/board';
 
 // UI组件
@@ -15,30 +16,56 @@ class Board extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: '',
+      wait: false,
     };
-    this.ws = new WebSocket('ws://localhost:3001'); // websocket实例
-    console.log('创建websocket实例成功', this.ws);
   }
 
   componentDidMount() {
-    
+    // 设置游戏模式（单人/双人）
+    if (this.props.username) {
+      this.props.change_mode(false).then(() => {
+        // 初始化连接
+        if (!this.props.isSinglePlayer) {
+          console.log(1);
+          this.setState({ wait: true });
+          this.props.ws.onopen = () => {
+            this.props.ws.send(JSON.stringify({ user: this.props.user }));
+          };
+          // Listen for messages
+          this.props.ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.user !== this.props.user) {
+              this.setState({ wait: false }, () => { console.log(this.state.wait) })
+              if (!data.isInit) {
+                this.props.ws.send(JSON.stringify({ user: this.props.user, isInit: true }));
+              }
+            }
+            console.log('Message from server ', data);
+          };
+        }
+      });
+      this.ws = new WebSocket('ws://localhost:3001'); // websocket实例
+      console.log('创建websocket实例成功', this.ws);
+    }
+
+
     // 绘制斜线
     let c = document.getElementById("diagonal");
     let cxt = c.getContext("2d");
     cxt.beginPath();
-    cxt.moveTo(258, 6);
-    cxt.lineTo(359, 107);
-    cxt.moveTo(359, 6);
-    cxt.lineTo(258, 107);
+    cxt.moveTo(258, 5);
+    cxt.lineTo(360, 105);
+    cxt.moveTo(360, 5);
+    cxt.lineTo(258, 105);
 
-    cxt.moveTo(258, 362);
-    cxt.lineTo(359, 463);
-    cxt.moveTo(359, 362);
-    cxt.lineTo(258, 463);
+    cxt.moveTo(258, 363);
+    cxt.lineTo(360, 464);
+    cxt.moveTo(360, 363);
+    cxt.lineTo(258, 464);
     cxt.strokeStyle = "black"
     cxt.stroke();
   }
+
   //判断棋子能不能走
   canMove = (moveid, row, col) => {
     //判断是否对将
@@ -78,7 +105,6 @@ class Board extends Component {
     }
     return -1;
   }
-
   //判断两个棋子是否是同一方的
   sameSide = (id_1, id_2) => {
     if (id_1 < 0 || id_1 > 31 || id_2 < 0 || id_2 > 31) {
@@ -89,7 +115,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 计算即将行走的棋子与某一坐标之间有几颗棋子 默认返回值为-1（主要用于对将以及车和炮的走棋算法上）
   num_of_Piece = (moveid, row, col) => {
     let i = -1,
@@ -131,7 +156,6 @@ class Board extends Component {
     // 当前棋子和要走的位置不在一条直线上
     return -1;
   }
-
   // 将的走棋规则
   canMoveJIANG = (moveid, row, col) => {
     // 列超出范围
@@ -164,7 +188,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 兵的走棋规则
   canMoveBING = (moveid, row, col) => {
     const dr = this.props.piece[moveid].row - row;
@@ -225,7 +248,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 车的走棋规则
   canMoveJU = (moveid, row, col) => {
     if (this.num_of_Piece(moveid, row, col) === 0) {
@@ -233,7 +255,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 炮的走棋规则
   canMovePAO = (moveid, row, col) => {
     // 判断要下的位置是否有棋子
@@ -249,7 +270,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 马的走棋规则
   canMoveMA = (moveid, row, col) => {
     const dr = this.props.piece[moveid].row - row;
@@ -277,7 +297,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 士的走棋规则
   canMoveSHI = (moveid, row, col) => {
     if (this.props.piece[moveid].red) {
@@ -307,7 +326,6 @@ class Board extends Component {
     }
     return false;
   }
-
   // 象的走棋规则
   canMoveXIANG = (moveid, row, col) => {
     // 不能过河
@@ -343,9 +361,9 @@ class Board extends Component {
     let _steps_inner = [];
 
     //难度等级（递归层数）
-    const _level = 4;
+    const _level = 2;
 
-    //枚举各种棋子分数（重要性）
+    // 枚举各种棋子分数（重要性）
     const chessScore = {
       "jiang": 1500,
       "ju": 100,
@@ -407,10 +425,9 @@ class Board extends Component {
       fakeMoveInfo.pop();
     }
 
-    //获取所有走得通的路径，获取电脑路径传true
+    // 获取所有走得通的路径，获取电脑路径传true
     function getAllPossibleMove(mach) {
-      let min;
-      let max;
+      let min, max;
       if (mach) {
         min = 0;
         max = 15;
@@ -419,15 +436,15 @@ class Board extends Component {
         max = 31;
       }
 
-      //遍历所有电脑方棋子
+      // 遍历所有电脑方棋子
       for (let id = min; id <= max; id++) {
-        //如果棋子已死则直接跳过
+        // 如果棋子已死则直接跳过
         if (piece[id].dead) {
           continue;
         }
-        //遍历所有行坐标
+        // 遍历所有行坐标
         for (let row = 0; row <= 9; row++) {
-          //遍历所有列坐标
+          // 遍历所有列坐标
           for (let col = 0; col <= 8; col++) {
             if (canMove(id, row, col)) {
               _steps_inner[_steps_inner.length] = { _moveid: id, _toRow: row, _toCol: col };
@@ -527,7 +544,7 @@ class Board extends Component {
 
   clickSend = () => {
     console.log('点击了');
-    this.ws.send(JSON.stringify({name:"dianji"}));
+    this.ws.send(JSON.stringify({ name: "dianji" }));
   }
 
   // 初始化棋子落位网方法
@@ -649,6 +666,8 @@ class Board extends Component {
                   canMove={this.canMove}
                   judgePiece={this.judgePiece}
                   machineMove={this.machineMove}
+                  user={this.props.username}
+                  wait={this.state.wait}
                   ws={this.ws} />
               )
             }
@@ -669,11 +688,13 @@ export default connect(
     isRedMove: state.board.isRedMove,
     activeId: state.board.activeId,
     isSelectPiece: state.board.isSelectPiece,
+    isSinglePlayer: state.board.isSinglePlayer,
   }),
   // mapDispatchToProps简写，react-redux会自动调用dispatch
   {
     move,
     change_select_state,
     change_active_id,
+    change_mode,
   },
 )(Board)

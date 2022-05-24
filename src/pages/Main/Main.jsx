@@ -5,9 +5,10 @@ import './Main.css'
 
 class Main extends Component {
   render() {
+    const { username } = this.props.location.state || {};
     return (
       <div id="div-main">
-        <Board />
+        <Board username={username}/>
         <Info />
       </div>
     );

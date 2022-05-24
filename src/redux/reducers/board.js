@@ -4,7 +4,13 @@
 * action: 动作对象
 */
 
-import { MOVE, CHANGE_SIDE, CHANGE_SELECT_STATE, CHANGE_ACTIVE_ID, CHANGE_DIFFICULTY, CHANGE_MODE } from "../constant"
+import { 
+  MOVE, 
+  CHANGE_SIDE, 
+  CHANGE_SELECT_STATE, 
+  CHANGE_ACTIVE_ID, 
+  CHANGE_DIFFICULTY, 
+  CHANGE_MODE } from "../constant"
 import { initPiece } from "../../pieceConstant"
 
 const initState = {
@@ -59,8 +65,9 @@ export default function boardReducer(preState = initState, action) {
       return { ...preState, activeId: data }
     case CHANGE_DIFFICULTY:
       return { ...preState, difficulty: data }
-    case CHANGE_MODE:
+    case CHANGE_MODE: {
       return { ...preState, isSinglePlayer: data }
+    }
     default:
       return preState
   }
