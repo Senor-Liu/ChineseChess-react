@@ -16,6 +16,8 @@ class Pos extends Component {
       activeId,
       isSelectPiece,
       isSinglePlayer,
+      setWaitingMove,
+      ws,
       move,
       canMove,
       machineMove,
@@ -35,6 +37,16 @@ class Pos extends Component {
         // change_active_id(-1);
         if (isSinglePlayer && activeId >= 16) {
           machineMove();
+        }
+        if (!isSinglePlayer) {
+          setWaitingMove();
+          ws.send(JSON.stringify({ 
+            user: this.props.user,
+            isInit: true,  
+            moveid: activeId,
+            row,
+            col,
+          }));
         }
       }
     }

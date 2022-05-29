@@ -65,9 +65,8 @@ export default function boardReducer(preState = initState, action) {
       return { ...preState, activeId: data }
     case CHANGE_DIFFICULTY:
       return { ...preState, difficulty: data }
-    case CHANGE_MODE: {
+    case CHANGE_MODE:
       return { ...preState, isSinglePlayer: data }
-    }
     default:
       return preState
   }

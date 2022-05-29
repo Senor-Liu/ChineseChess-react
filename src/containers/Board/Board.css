@@ -2,7 +2,7 @@
 #div-chessboard {
 	position: relative;
 	top: 50px;
-	width: 600px;
+	width: 700px;
 	height: 600px;
 }
 .chesstable {
@@ -55,4 +55,15 @@
 .chess-diagonal {
   position: absolute;
   z-index: 2;
+}
+
+/* 表格 */
+table,
+td {
+  border: 1px solid #333;
+}
+
+thead,
+tfoot {
+  background-color: #9d7440;
 }

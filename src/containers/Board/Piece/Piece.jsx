@@ -14,7 +14,7 @@ class Piece extends Component {
   //   super(props);
   // }
   // componentDidMount() {
-    
+
   // }
 
   handlePieceClick = () => {
@@ -24,6 +24,11 @@ class Piece extends Component {
       alert("请等待对方加入");
       return;
     }
+    if (this.props.waitingMove) {
+      alert("请等待对方走棋");
+      return;
+    }
+
     const {
       piece,
       id,
@@ -31,6 +36,8 @@ class Piece extends Component {
       isRedMove,
       isSelectPiece,
       isSinglePlayer,
+      setWaitingMove,
+      ws,
       move,
       canMove,
       machineMove,
@@ -71,6 +78,16 @@ class Piece extends Component {
           let beforePiece = document.getElementById(activeId);
           beforePiece.className = "piece piece-red";
 
+          if (!isSinglePlayer) {
+            setWaitingMove();
+            ws.send(JSON.stringify({ 
+              user: this.props.user,
+              isInit: true,  
+              moveid: activeId,
+              row: piece[id].row,
+              col: piece[id].col,
+            }));
+          }
           // change_active_id(-1);
         }
       }
@@ -109,6 +126,18 @@ class Piece extends Component {
           if (isSinglePlayer && activeId >= 16) {
             machineMove();
           }
+
+          if (!isSinglePlayer) {
+            setWaitingMove();
+            ws.send(JSON.stringify({ 
+              user: this.props.user,
+              isInit: true,  
+              moveid: activeId,
+              row: piece[id].row,
+              col: piece[id].col,
+            }));
+          }
+
         }
       }
       return;

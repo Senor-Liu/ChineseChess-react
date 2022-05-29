@@ -16,36 +16,41 @@ class Board extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userList: [],
       wait: false,
+      waitingMove: false,
     };
   }
 
   componentDidMount() {
     // 设置游戏模式（单人/双人）
     if (this.props.username) {
+      this.ws = new WebSocket('ws://localhost:3001'); // websocket实例
+      console.log('创建websocket实例成功', this.ws);
       this.props.change_mode(false).then(() => {
         // 初始化连接
         if (!this.props.isSinglePlayer) {
-          console.log(1);
           this.setState({ wait: true });
-          this.props.ws.onopen = () => {
-            this.props.ws.send(JSON.stringify({ user: this.props.user }));
+          this.ws.onopen = () => {
+            this.ws.send(JSON.stringify({ user: this.props.username }));
           };
           // Listen for messages
-          this.props.ws.onmessage = (event) => {
+          this.ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.user !== this.props.user) {
-              this.setState({ wait: false }, () => { console.log(this.state.wait) })
+            if (data.user !== this.props.username) {
+              this.setState({ wait: false, userList: data.rank }, () => { console.log(this.state); })
               if (!data.isInit) {
-                this.props.ws.send(JSON.stringify({ user: this.props.user, isInit: true }));
+                this.ws.send(JSON.stringify({ user: this.props.username, isInit: true }));
+              }
+              if (data.isInit && data.moveid) {
+                this.props.move({ id: data.moveid, toRow: data.row, toCol: data.col });
+                this.setState({ waitingMove: false });
               }
             }
             console.log('Message from server ', data);
           };
         }
       });
-      this.ws = new WebSocket('ws://localhost:3001'); // websocket实例
-      console.log('创建websocket实例成功', this.ws);
     }
 
 
@@ -64,6 +69,10 @@ class Board extends Component {
     cxt.lineTo(258, 464);
     cxt.strokeStyle = "black"
     cxt.stroke();
+  }
+
+  setWaitingMove = () => {
+    this.setState({ waitingMove: true });
   }
 
   //判断棋子能不能走
@@ -354,6 +363,7 @@ class Board extends Component {
       move,
       change_select_state,
       change_active_id,
+      difficulty,
     } = this.props;
     const { canMove, judgePiece } = this;
     //存放所有走得通的路径
@@ -361,7 +371,7 @@ class Board extends Component {
     let _steps_inner = [];
 
     //难度等级（递归层数）
-    const _level = 2;
+    const _level = difficulty;
 
     // 枚举各种棋子分数（重要性）
     const chessScore = {
@@ -544,7 +554,7 @@ class Board extends Component {
 
   clickSend = () => {
     console.log('点击了');
-    this.ws.send(JSON.stringify({ name: "dianji" }));
+    this.ws.send(JSON.stringify({ user: this.props.username, isInit: true }));
   }
 
   // 初始化棋子落位网方法
@@ -558,13 +568,19 @@ class Board extends Component {
           col={i}
           canMove={this.canMove}
           judgePiece={this.judgePiece}
-          machineMove={this.machineMove} />)
+          machineMove={this.machineMove}
+          setWaitingMove={this.setWaitingMove}
+          user={this.props.username}
+          ws={this.ws} />)
       }
     }
     return list
   }
 
   render() {
+    if (this.props.piece[20].dead || this.props.piece[4].dead) {
+      alert("游戏结束！");
+    }
     return (
       <div id="div-chessboard">
         <canvas className="chess-diagonal" id="diagonal" width="600px" height="600px">您的浏览器不支持canvas</canvas>
@@ -663,11 +679,12 @@ class Board extends Component {
                 <Piece
                   key={pieceObj.id}
                   {...pieceObj}
+                  {...this.state}
+                  setWaitingMove={this.setWaitingMove}
                   canMove={this.canMove}
                   judgePiece={this.judgePiece}
                   machineMove={this.machineMove}
                   user={this.props.username}
-                  wait={this.state.wait}
                   ws={this.ws} />
               )
             }
@@ -675,7 +692,34 @@ class Board extends Component {
           })
         }
         <>{this.initPos()}</>
-        <button style={{ position: 'absolute', top: '700px' }} onClick={this.clickSend}>发送</button>
+        {this.props.isSinglePlayer ? null :
+          <p style={{ position: 'absolute', top: '0px', left: '-30px' }}>
+            {this.state.wait ? "等待对手加入" : "开始游戏"}
+          </p>
+        }
+        {
+          this.state.userList && !this.props.isSinglePlayer ?
+            <table style={{ position: 'absolute', top: '0px', left: '550px' }}>
+              <thead>
+                <tr>
+                  <th colspan="1">用户名</th>
+                  <th colspan="1">胜场</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {
+                    this.state.userList.map((userObj) => {
+                      return (
+                        <tr>
+                          <td>{userObj.username}</td>
+                          <td>{parseInt(userObj.num)}</td>
+                        </tr>
+                      )
+                    })
+                  }
+              </tbody>
+            </table> : null
+        }
       </div>
     );
   }
@@ -689,6 +733,7 @@ export default connect(
     activeId: state.board.activeId,
     isSelectPiece: state.board.isSelectPiece,
     isSinglePlayer: state.board.isSinglePlayer,
+    difficulty: state.board.difficulty,
   }),
   // mapDispatchToProps简写，react-redux会自动调用dispatch
   {
